@@ -1,0 +1,162 @@
+{
+  "bl_webnovel": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "mp05",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200,
+        "MASK_PROB": 0.5
+      }
+    },
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "mp06",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200,
+        "MASK_PROB": 0.6
+      }
+    },
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "mp07",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200,
+        "MASK_PROB": 0.7
+      }
+    },
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "mp08",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200,
+        "MASK_PROB": 0.8
+      }
+    }
+  ],
+  "general": [
+    {
+      "data_tag": "umin2_imin2",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 2,
+        "TRAIN_ITEM_MIN_INTERACTION": 2,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 2,
+        "TEST_ITEM_MIN_INTERACTION": 2,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 100,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    },
+    {
+      "data_tag": "umin2_imin5",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 2,
+        "TRAIN_ITEM_MIN_INTERACTION": 5,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 2,
+        "TEST_ITEM_MIN_INTERACTION": 5,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 100,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    },
+    {
+      "data_tag": "umin3_imin5",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 3,
+        "TRAIN_ITEM_MIN_INTERACTION": 5,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 3,
+        "TEST_ITEM_MIN_INTERACTION": 5,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 100,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    },
+    {
+      "data_tag": "umin5_imin5",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 5,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 5,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 100,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ]
+}

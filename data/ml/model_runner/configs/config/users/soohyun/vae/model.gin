@@ -1,0 +1,75 @@
+include 'data/ml/model_runner/configs/config/common/base_user.gin'
+include 'data/ml/model_runner/configs/config/common/model.gin'
+
+#####################
+##### CONSTANTS #####
+#####################
+
+MODEL_NAME = "vae"
+ENCODER_DIMS = [512, 256]
+DECODER_DIMS = [256, 512]
+TOTAL_ANNEAL_STEPS = 0.4
+ANNEAL_CAP = 0.3
+
+INTERACTION_TYPES = None
+VERSION_TAG = None
+GENRE = None
+
+GENERATOR = @ExclusionGenerator()
+
+TRAIN_DEV_DATA_TRANSFORMER_COLS = ["inputs", "targets", "input_weights", "target_weights"]
+TRAIN_DEV_DATA_TRANSFORMER_SPARSE_COLS = ["inputs", "targets"]
+TRAIN_DEV_DATA_TRANSFORMER_WEIGHT_COLS = ["input_weights", "target_weights"]
+TRAIN_DEV_DATA_TRANSFORMER_META_KEYS = ["item_id", "item_id"]
+
+TEST_DATA_TRANSFORMER_COLS = ["user_id", "inputs", "input_weights"]
+TEST_DATA_TRANSFORMER_SPARSE_COLS = ["inputs", "owned_items"]
+TEST_DATA_TRANSFORMER_WEIGHT_COLS = ["input_weights", None]
+TEST_DATA_TRANSFORMER_META_KEYS = ["item_id", "item_id"]
+
+######################
+#### MODEL CONFIG ####
+######################
+
+RecsysTrainer.model = @VAE()
+RecsysPredictor.model = @VAE()
+
+VAE.meta = %METADATA
+VAE.generator = %GENERATOR
+VAE.encoder_dims = %ENCODER_DIMS
+VAE.decoder_dims = %DECODER_DIMS
+VAE.total_anneal_steps = %TOTAL_ANNEAL_STEPS
+VAE.anneal_cap = %ANNEAL_CAP
+
+##############################
+#### TRAIN/PREDICT CONFIG ####
+##############################
+
+TrainConfig.checkpoints = [@best/CheckpointConfig()]
+
+#######################################
+#### TRAIN/DEV/TEST DATASET CONFIG ####
+#######################################
+
+ExclusionGenerator.meta = %METADATA
+ExclusionGenerator.top_k = 200
+ExclusionGenerator.exclusion_col = "owned_items"
+ExclusionGenerator.threshold = 0
+
+TRANSFORMER = @transformer/gin.singleton()
+transformer/gin.singleton.constructor = @SparseWeightedDataTransformer
+
+train_dataset/ParquetDataset2.transformer = %TRANSFORMER
+dev_dataset/ParquetDataset2.transformer = %TRANSFORMER
+SparseWeightedDataTransformer.meta = %METADATA
+SparseWeightedDataTransformer.cols = %TRAIN_DEV_DATA_TRANSFORMER_COLS
+SparseWeightedDataTransformer.sparse_cols = %TRAIN_DEV_DATA_TRANSFORMER_SPARSE_COLS
+SparseWeightedDataTransformer.weight_cols = %TRAIN_DEV_DATA_TRANSFORMER_WEIGHT_COLS
+SparseWeightedDataTransformer.meta_keys = %TRAIN_DEV_DATA_TRANSFORMER_META_KEYS
+
+test_dataset/ParquetDataset2.transformer = @test_dataset/SparseWeightedDataTransformer()
+test_dataset/SparseWeightedDataTransformer.meta = %METADATA
+test_dataset/SparseWeightedDataTransformer.cols = %TEST_DATA_TRANSFORMER_COLS
+test_dataset/SparseWeightedDataTransformer.sparse_cols = %TEST_DATA_TRANSFORMER_SPARSE_COLS
+test_dataset/SparseWeightedDataTransformer.weight_cols = %TEST_DATA_TRANSFORMER_WEIGHT_COLS
+test_dataset/SparseWeightedDataTransformer.meta_keys = %TEST_DATA_TRANSFORMER_META_KEYS

@@ -1,0 +1,91 @@
+include 'data/ml/configs/config/users/hyesung/common.gin'
+
+_run.do_train = True
+_run.do_predict = True
+_run.trainer = @RecsysTrainer()
+_run.predictor = @RecsysPredictor()
+
+
+###
+### PREPARE META
+###
+Meta.filepath = %DATA_PROCESSOR_META_OUTPUT_PATH
+metadata/gin.singleton.constructor = @Meta
+METADATA = @metadata/gin.singleton()
+
+####
+#### MODEL CONFIG ###
+####
+
+ExclusionGenerator.meta = %METADATA
+ExclusionGenerator.top_k = 200
+ExclusionGenerator.exclusion_col = "inputs"
+ExclusionGenerator.threshold = 0
+
+VAE.meta = %METADATA
+VAE.generator = @ExclusionGenerator()
+VAE.encoder_dims = [512, 256]
+VAE.decoder_dims = [256, 512]
+VAE.total_anneal_steps = 0.4
+VAE.anneal_cap = 0.3
+
+####
+#### TRAIN CONFIG ###
+####
+
+train_dataset/ParquetIterableSparseDataSet.parquet_dir = %MODEL_TRAIN_INPUT_PATH
+train_dataset/ParquetIterableSparseDataSet.meta = %METADATA
+train_dataset/ParquetIterableSparseDataSet.cols = ["inputs", "targets"]
+train_dataset/ParquetIterableSparseDataSet.shuffle = True
+train_dataset/ParquetIterableSparseDataSet.shuffle_buffer_size = 4096
+train_dataset/ParquetIterableSparseDataSet.seed = 1234
+
+dev_dataset/ParquetIterableSparseDataSet.parquet_dir = %MODEL_DEV_INPUT_PATH
+dev_dataset/ParquetIterableSparseDataSet.meta = %METADATA
+dev_dataset/ParquetIterableSparseDataSet.cols = ["inputs", "targets"]
+dev_dataset/ParquetIterableSparseDataSet.shuffle = False
+
+best/CheckpointConfig.monitor = "loss/dev"
+best/CheckpointConfig.mode = "min"
+best/CheckpointConfig.filename = "best_model"
+best/CheckpointConfig.dirpath = %MODEL_CHECKPOINT_OUTPUT_PATH
+EarlyStoppingConfig.monitor = "loss/dev"
+EarlyStoppingConfig.min_delta = 0.0
+EarlyStoppingConfig.patience = 10
+
+TrainConfig.checkpoints = [@best/CheckpointConfig()]
+TrainConfig.early_stopping = @EarlyStoppingConfig()
+TrainConfig.accelerator = "gpu"
+TrainConfig.batch_size = 128
+TrainConfig.devices = 1
+TrainConfig.max_epoch = 100
+TrainConfig.num_workers = 8
+TrainConfig.log_dir = %MODEL_LOG_OUTPUT_PATH
+
+RecsysTrainer.config = @TrainConfig()
+RecsysTrainer.dev_dataset = @dev_dataset/ParquetIterableSparseDataSet()
+RecsysTrainer.train_dataset = @train_dataset/ParquetIterableSparseDataSet()
+RecsysTrainer.model = @VAE()
+
+####
+#### PREDICT CONFIG ###
+####
+
+test_dataset/ParquetIterableSparseDataSet.parquet_dir = %MODEL_TEST_INPUT_PATH
+test_dataset/ParquetIterableSparseDataSet.meta = %METADATA
+test_dataset/ParquetIterableSparseDataSet.cols = ["user_id", "inputs"]
+test_dataset/ParquetIterableSparseDataSet.ignore = ["user_id"]
+test_dataset/ParquetIterableSparseDataSet.shuffle = False
+
+RecsysPredictConfig.checkpoint_dir = %MODEL_CHECKPOINT_OUTPUT_PATH
+RecsysPredictConfig.output_path = %MODEL_PREDICTION_OUTPUT_PATH
+RecsysPredictConfig.accelerator = "gpu"
+RecsysPredictConfig.batch_size = 128
+RecsysPredictConfig.devices = 1
+RecsysPredictConfig.num_workers = 8
+RecsysPredictConfig.top_k = 200
+
+RecsysPredictor.test_dataset = @test_dataset/ParquetIterableSparseDataSet()
+RecsysPredictor.config = @RecsysPredictConfig()
+RecsysPredictor.metadata = %METADATA
+RecsysPredictor.model = @VAE()

@@ -1,0 +1,39 @@
+######################################
+# COMMON                             #
+# These values are injected by MWAA. #
+######################################
+DATE = None
+PARTITION = None
+BASE_DATA_PATH = None
+TABLE_NAME = None
+TRAIN = None
+PREDICT = None
+
+DATA_DAYS = 365
+
+_run.data_processor = @SequentialDataProcessor()
+_run.do_train = %TRAIN
+_run.do_predict = %PREDICT
+
+MODEL_NAME = "sr"
+
+create_date_paths.partition = %PARTITION
+create_date_paths.end_date = %DATE
+create_date_paths.days_to_collect = %DATA_DAYS
+
+
+join_paths.base_path = %BASE_DATA_PATH
+warehouse/join_paths.sub_paths = [%TABLE_NAME]
+warehouse/join_paths.sub_path_rows = @create_date_paths()
+# recsys/dataset/MODEL_NAME/date=XXXX/genre=YYYY
+dataset/join_paths.sub_paths = ["recsys", "dataset", %MODEL_NAME, %PARTITION]
+
+SequentialDataProcessor.input_files = @warehouse/join_paths()
+SequentialDataProcessor.output_path = @dataset/join_paths()
+SequentialDataProcessor.side_features = ["category", "author", "publisher_name", "age_limit"]
+SequentialDataProcessor.meta_filename = "meta.json"
+SequentialDataProcessor.min_item_interaction =  3
+SequentialDataProcessor.min_user_interaction =  1
+SequentialDataProcessor.run_locally = False
+SequentialDataProcessor.input_user_id_col = "u_idx"
+SequentialDataProcessor.input_item_id_col = "item.id"

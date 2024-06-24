@@ -1,0 +1,29 @@
+include 'data/ml/configs/config/users/hyesung/common.gin'
+
+####
+#### MAIN
+####
+
+DATE = None
+DATA_DAYS = 365
+
+MIN_ITEM_INTERACTION = 3
+MIN_USER_INTERACTION = 1
+
+create_date_paths.partition = %PARTITION
+create_date_paths.end_date = %DATE
+create_date_paths.days_to_collect = %DATA_DAYS
+
+SequentialDataProcessor.input_files = %DATA_PROCESSOR_INPUT_PATH
+SequentialDataProcessor.output_path = %DATA_PROCESSOR_OUTPUT_PATH
+SequentialDataProcessor.side_features = ["category", "author", "publisher_name", "age_limit"]
+SequentialDataProcessor.meta_filename = %META_FILENAME
+SequentialDataProcessor.min_item_interaction =  %MIN_ITEM_INTERACTION
+SequentialDataProcessor.min_user_interaction =  %MIN_USER_INTERACTION
+SequentialDataProcessor.run_locally = False
+SequentialDataProcessor.input_user_id_col = "u_idx"
+SequentialDataProcessor.input_item_id_col = "item.id"
+
+_run.data_processor = @SequentialDataProcessor()
+_run.do_train = True
+_run.do_predict = True

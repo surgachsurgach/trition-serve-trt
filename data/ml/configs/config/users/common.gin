@@ -1,0 +1,11 @@
+BASE_DATA_PATH = "s3://ridi-ml-dev"
+USER = ""
+EXP_NAME = ""
+
+user_home/join_paths.base_path = %BASE_DATA_PATH
+user_home/join_paths.sub_paths = ["home", %USER]
+USER_HOME = @user_home/join_paths()
+
+work_dir/join_paths.base_path = %USER_HOME
+work_dir/join_paths.sub_paths = [%EXP_NAME]
+WORKDIR = @work_dir/join_paths()

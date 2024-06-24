@@ -1,0 +1,20 @@
+TRAIN_NUM_PARTITIONS = 10
+DEV_NUM_PARTITIONS = 1
+TEST_NUM_PARTITIONS = 1
+DEV_SPLIT_SIZE = 0.1
+
+_run.do_train = %TRAIN
+_run.do_predict = %PREDICT
+
+################
+#### CONFIG ####
+################
+
+DataProcessConfig.input_files = %DATA_PROCESSOR_INPUT_PATH
+DataProcessConfig.output_path = %DATA_PROCESSOR_OUTPUT_PATH
+DataProcessConfig.dev_split_size = %DEV_SPLIT_SIZE
+DataProcessConfig.run_locally = False
+
+DataProcessConfig.train_num_partitions = %TRAIN_NUM_PARTITIONS
+DataProcessConfig.dev_num_partitions = %DEV_NUM_PARTITIONS
+DataProcessConfig.test_num_partitions = %TEST_NUM_PARTITIONS

@@ -1,0 +1,31 @@
+######################################
+# COMMON BASE                        #
+# These values are injected by User. #
+######################################
+
+TRAIN = None
+PREDICT = None
+
+BASE_DATA_PATH = None # s3://sagemaker-us-east-1-368316345532/recsys/dataset/{stage|prod}
+INPUT_TABLE_NAME = None
+INPUT_PARTITION = None
+OUTPUT_TABLE_NAME = None
+OUTPUT_PARTITION = None
+MODEL_NAME = None
+
+PREDICTION_PARQUET_FILENAME = "predictions.snappy.parquet"
+
+MODEL_CHECKPOINT_PATH = @model_checkpoint_path/join_paths()
+DATA_PROCESSOR_OUTPUT_PATH = %MODEL_CHECKPOINT_PATH
+
+PREDICTION_BASE_PATH = None
+
+model_checkpoint_path/join_paths.base_path = %BASE_DATA_PATH
+# s3://ridi-emr/recsys/dataset/%MODEL_NAME/%INPUT_TABLE_NAME/%INPUT_PARTITION
+model_checkpoint_path/join_paths.sub_paths = [%MODEL_NAME, %INPUT_TABLE_NAME, %INPUT_PARTITION]
+
+MODEL_BASE_PATH = %MODEL_CHECKPOINT_PATH
+PREDICT_OUTPUT_PATH = @predict/join_paths()
+
+predict/join_paths.base_path = %PREDICTION_BASE_PATH
+predict/join_paths.sub_paths = [%OUTPUT_TABLE_NAME, %OUTPUT_PARTITION, %PREDICTION_PARQUET_FILENAME]

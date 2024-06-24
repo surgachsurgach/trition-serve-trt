@@ -1,0 +1,53 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: recsys-model-runner
+spec:
+  terminationGracePeriodSeconds: 0
+  containers:
+    - name: main
+      image: {{ image_uri }}
+      imagePullPolicy: Always
+      resources:
+        requests:
+          cpu: "{{ cpu }}"
+          memory: {{ memory }}
+          nvidia.com/gpu: "{{ gpu }}"
+        limits:
+          cpu: "{{ cpu }}"
+          memory: {{ memory }}
+          nvidia.com/gpu: "{{ gpu }}"
+      volumeMounts:
+        # Since PyTorch uses shared memory to share data between processes,
+        # we should increase shared memory size for torch multi-processing (e.g., multi-threaded data loaders)
+        - mountPath: /dev/shm
+          name: shmdir
+      env:
+        - name: GIN_FILE
+          value: "{{ gin_file }}"
+        - name: GIN_PARAMS
+          value: "{{ gin_params }}"
+        - name: SLACK_BATCH_LOGGING_URL
+          valueFrom:
+            secretKeyRef:
+              name: data-secrets
+              key: SLACK_BATCH_LOGGING_URL
+        - name: SLACK_DATA_REPORT_URL
+          valueFrom:
+            secretKeyRef:
+              name: data-secrets
+              key: SLACK_DATA_REPORT_URL
+  restartPolicy: Never
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+    - key: multi-gpu
+      operator: Equal
+      value: "{{ multi_gpu|default('false', 'true') }}"
+      effect: NoSchedule
+  volumes:
+    - name: shmdir
+      emptyDir:
+        medium: Memory

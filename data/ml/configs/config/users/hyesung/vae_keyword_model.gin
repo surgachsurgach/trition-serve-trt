@@ -1,0 +1,89 @@
+include 'data/ml/configs/config/users/hyesung/common.gin'
+
+_run.do_train = True
+_run.do_predict = True
+_run.trainer = @RecsysTrainer()
+_run.predictor = @RecsysPredictor()
+
+
+###
+### PREPARE META
+###
+Meta.filepath = %DATA_PROCESSOR_META_OUTPUT_PATH
+metadata/gin.singleton.constructor = @Meta
+METADATA = @metadata/gin.singleton()
+
+####
+#### MODEL CONFIG ###
+####
+
+VAE.meta = %METADATA
+VAE.encoder_dims = [256, 128, 64]
+VAE.decoder_dims = [64, 128, 256]
+VAE.total_anneal_steps = 0.4
+VAE.anneal_cap = 0.3
+VAE.exclude_inputs_from_predictions = False
+
+####
+#### TRAIN CONFIG ###
+####
+TRANSFORMER = @transformer/gin.singleton()
+transformer/gin.singleton.constructor = @SparseDataTransformer
+SparseDataTransformer.meta = %METADATA
+SparseDataTransformer.cols = ["inputs", "targets"]
+
+train_dataset/ParquetDataset2.parquet_dir = %MODEL_TRAIN_INPUT_PATH
+train_dataset/ParquetDataset2.transformer = %TRANSFORMER
+train_dataset/ParquetDataset2.shuffle = True
+train_dataset/ParquetDataset2.cache_transformed_data = True
+train_dataset/ParquetDataset2.seed = 1234
+
+dev_dataset/ParquetDataset2.parquet_dir = %MODEL_DEV_INPUT_PATH
+dev_dataset/ParquetDataset2.transformer = %TRANSFORMER
+dev_dataset/ParquetDataset2.cache_transformed_data = True
+dev_dataset/ParquetDataset2.dataset_type = %DatasetType.DEV_DATASET
+
+best/CheckpointConfig.monitor = "loss/dev"
+best/CheckpointConfig.mode = "min"
+best/CheckpointConfig.filename = "best_model"
+best/CheckpointConfig.dirpath = %MODEL_CHECKPOINT_OUTPUT_PATH
+EarlyStoppingConfig.monitor = "loss/dev"
+EarlyStoppingConfig.min_delta = 0.0
+EarlyStoppingConfig.patience = 80
+TrainConfig.checkpoints = [@best/CheckpointConfig()]
+TrainConfig.early_stopping = @EarlyStoppingConfig()
+TrainConfig.accelerator = "gpu"
+TrainConfig.batch_size = 128
+TrainConfig.devices = 1
+TrainConfig.max_epoch = 100
+TrainConfig.num_workers = 4
+TrainConfig.log_dir = %MODEL_LOG_OUTPUT_PATH
+
+RecsysTrainer.config = @TrainConfig()
+RecsysTrainer.dev_dataset = @dev_dataset/ParquetDataset2()
+RecsysTrainer.train_dataset = @train_dataset/ParquetDataset2()
+RecsysTrainer.model = @VAE()
+
+####
+#### PREDICT CONFIG ###
+####
+
+test_dataset/ParquetIterableDataset2.parquet_dir = %MODEL_TEST_INPUT_PATH
+test_dataset/ParquetIterableDataset2.transformer = @test_dataset/SparseDataTransformer()
+test_dataset/SparseDataTransformer.meta = %METADATA
+test_dataset/SparseDataTransformer.cols = ["user_id", "inputs"]
+test_dataset/SparseDataTransformer.ignore = ["user_id"]
+
+
+RecsysPredictConfig.checkpoint_dir = %MODEL_CHECKPOINT_OUTPUT_PATH
+RecsysPredictConfig.output_path = %MODEL_PREDICTION_OUTPUT_PATH
+RecsysPredictConfig.accelerator = "gpu"
+RecsysPredictConfig.batch_size = 128
+RecsysPredictConfig.devices = 1
+RecsysPredictConfig.num_workers = 8
+RecsysPredictConfig.top_k = 30
+
+RecsysPredictor.test_dataset = @test_dataset/ParquetIterableDataset2()
+RecsysPredictor.config = @RecsysPredictConfig()
+RecsysPredictor.metadata = %METADATA
+RecsysPredictor.model = @VAE()

@@ -1,0 +1,19 @@
+include 'data/ml/configs/config/common/base_user.gin'
+include 'data/ml/configs/config/common/data_processor.gin'
+include 'data/ml/configs/config/common/interaction_data_processor.gin'
+
+MODEL_NAME = "vae"
+
+####
+#### MAIN
+####
+
+_run.data_processor = @UserAutoEncoderDataProcessor()
+
+UserAutoEncoderDataProcessor.config = @DataProcessConfig()
+UserAutoEncoderDataProcessor.schema_config = @InteractionDataSchemaConfig()
+UserAutoEncoderDataProcessor.train_process_config = @train/InteractionDataProcessConfig()
+UserAutoEncoderDataProcessor.test_process_config = @test/InteractionDataProcessConfig()
+
+train/InteractionDataProcessConfig.target_interactions = ["paid", "free"]
+test/InteractionDataProcessConfig.target_interactions = ["paid", "free"]

@@ -1,0 +1,22 @@
+include 'data/ml/configs/config/common/base_pipeline.gin'
+include 'data/ml/configs/config/common/data_processor.gin'
+
+###################
+#### CONSTANTS ####
+###################
+
+MODEL_NAME = "vae"
+
+##############
+#### MAIN ####
+##############
+
+_run.data_processor = @AutoEncoderDataProcessor()
+
+AutoEncoderDataProcessor.input_files = %DATA_PROCESSOR_INPUT_PATH
+AutoEncoderDataProcessor.output_path = %DATA_PROCESSOR_OUTPUT_PATH
+AutoEncoderDataProcessor.meta_filename =  "meta.json"
+AutoEncoderDataProcessor.min_item_interaction = 5
+AutoEncoderDataProcessor.min_user_interaction = 10
+AutoEncoderDataProcessor.input_target_interaction_col = "act_type"
+AutoEncoderDataProcessor.run_locally = False

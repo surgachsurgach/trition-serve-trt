@@ -1,0 +1,55 @@
+include 'data/ml/configs/config/common/base_pipeline.gin'
+include 'data/ml/configs/config/common/model.gin'
+
+###################
+#### CONSTANTS ####
+###################
+
+MODEL_NAME = "vae"
+ENCODER_DIMS = [512, 256]
+DECODER_DIMS = [256, 512]
+DROPOUT = 0.5
+ANNEAL_CAP = 0.3
+TOTAL_ANNEAL_STEPS = 0.4
+
+######################
+#### MODEL CONFIG ####
+######################
+
+RecsysTrainer.model = @VAE()
+RecsysPredictor.model = @VAE()
+
+VAE.meta = %METADATA
+VAE.generator = %GENERATOR
+VAE.encoder_dims = %ENCODER_DIMS
+VAE.decoder_dims = %DECODER_DIMS
+VAE.total_anneal_steps = %TOTAL_ANNEAL_STEPS
+VAE.anneal_cap = %ANNEAL_CAP
+
+##############################
+#### TRAIN/PREDICT CONFIG ####
+##############################
+
+TrainConfig.checkpoints = [@best/CheckpointConfig()]
+
+#######################################
+#### TRAIN/DEV/TEST DATASET CONFIG ####
+#######################################
+
+TRANSFORMER = @transformer/gin.singleton()
+transformer/gin.singleton.constructor = @SparseWeightedDataTransformer
+
+train_dataset/ParquetDataset2.transformer = %TRANSFORMER
+dev_dataset/ParquetDataset2.transformer = %TRANSFORMER
+SparseWeightedDataTransformer.meta = %METADATA
+SparseWeightedDataTransformer.cols = ["inputs", "targets", "input_weights", "target_weights"]
+SparseWeightedDataTransformer.sparse_cols = ["inputs", "targets"]
+SparseWeightedDataTransformer.weight_cols = ["input_weights", "target_weights"]
+SparseWeightedDataTransformer.meta_keys = ["item_id", "item_id"]
+
+test_dataset/ParquetDataset2.transformer = @test_dataset/SparseWeightedDataTransformer()
+test_dataset/SparseWeightedDataTransformer.meta = %METADATA
+test_dataset/SparseWeightedDataTransformer.cols = ["user_id", "inputs", "input_weights"]
+test_dataset/SparseWeightedDataTransformer.sparse_cols = ["inputs"]
+test_dataset/SparseWeightedDataTransformer.weight_cols = ["input_weights"]
+test_dataset/SparseWeightedDataTransformer.meta_keys = ["item_id"]

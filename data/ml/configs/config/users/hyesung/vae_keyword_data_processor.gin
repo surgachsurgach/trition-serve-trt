@@ -1,0 +1,14 @@
+include 'data/ml/configs/config/users/hyesung/common.gin'
+
+KeywordAutoEncoderDataProcessor.input_files = %DATA_PROCESSOR_INPUT_PATH
+KeywordAutoEncoderDataProcessor.output_path = %DATA_PROCESSOR_OUTPUT_PATH
+KeywordAutoEncoderDataProcessor.meta_filename = %META_FILENAME
+KeywordAutoEncoderDataProcessor.input_user_id_col = "u_idx"
+KeywordAutoEncoderDataProcessor.input_item_id_col = "item.tags"
+KeywordAutoEncoderDataProcessor.min_item_interaction =  2
+KeywordAutoEncoderDataProcessor.min_user_interaction =  1
+KeywordAutoEncoderDataProcessor.run_locally = False
+
+_run.data_processor = @KeywordAutoEncoderDataProcessor()
+_run.do_train = True
+_run.do_predict = True

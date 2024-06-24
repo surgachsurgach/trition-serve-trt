@@ -1,0 +1,144 @@
+##################################
+# COMMON                         #
+# These values must be injected. #
+##################################
+
+MODEL_NAME = None
+DEVICES = None
+NUM_WORKERS = None
+
+TRAN_CACHE_TRANSFORMED_DATA = True
+DEV_CACHE_TRANSFORMED_DATA = True
+TEST_CACHE_TRANSFORMED_DATA = True
+
+#### CONSTANTS ####
+
+META_FILENAME = "train_meta.json"
+
+MAX_EPOCHS = 100
+BATCH_SIZE = 256
+PREDICT_TOP_K = None
+
+GENERATOR = None
+EARLY_STOPPER = None
+
+WEIGHT_DECAY = 0.0
+MIN_DELTA = 0.0
+PATIENCE = 10
+
+SEED = 1234
+
+##############
+#### MAIN ####
+##############
+
+_run.do_train = %TRAIN
+_run.do_predict = %PREDICT
+
+_run.trainer = @RecsysTrainer()
+_run.predictor = @RecsysPredictor()
+
+#################
+#### DATASET ####
+#################
+
+train_dataset_path/join_paths.base_path = %DATA_PROCESSOR_OUTPUT_PATH
+train_dataset_path/join_paths.sub_paths = ["train"]
+
+dev_dataset_path/join_paths.base_path = %DATA_PROCESSOR_OUTPUT_PATH
+dev_dataset_path/join_paths.sub_paths = ["dev"]
+
+test_dataset_path/join_paths.base_path = %DATA_PROCESSOR_OUTPUT_PATH
+test_dataset_path/join_paths.sub_paths = ["test"]
+
+logdir/join_paths.base_path = %MODEL_BASE_PATH
+logdir/join_paths.sub_paths = ["logdir"]
+
+checkpoint/join_paths.base_path = @logdir/join_paths()
+checkpoint/join_paths.sub_paths = ["checkpoints"]
+
+######################
+#### PREPARE META ####
+######################
+
+METADATA = @metadata/gin.singleton()
+metadata/gin.singleton.constructor = @Meta
+Meta.filepath = @data_processor_meta_output/join_paths()
+
+data_processor_meta_output/join_paths.base_path = %DATA_PROCESSOR_OUTPUT_PATH
+data_processor_meta_output/join_paths.sub_paths = [%META_FILENAME]
+
+RecsysPredictor.metadata = %METADATA
+
+######################
+#### TRAIN CONFIG ####
+######################
+
+RecsysTrainer.config = @TrainConfig()
+
+TrainConfig.accelerator = "gpu"
+TrainConfig.batch_size = %BATCH_SIZE
+TrainConfig.devices = %DEVICES
+TrainConfig.max_epoch = %MAX_EPOCHS
+TrainConfig.num_workers = %NUM_WORKERS
+TrainConfig.pin_memory = True
+TrainConfig.log_dir = @logdir/join_paths()
+
+#### CHECKPOINT
+
+TrainConfig.checkpoints = [@best/CheckpointConfig()]
+best/CheckpointConfig.monitor = "loss/dev"
+best/CheckpointConfig.mode = "min"
+best/CheckpointConfig.filename = "best_model"
+best/CheckpointConfig.dirpath = @checkpoint/join_paths()
+
+#### Early Stopping
+
+TrainConfig.early_stopping = %EARLY_STOPPER
+
+EarlyStoppingConfig.monitor = "loss/dev"
+EarlyStoppingConfig.min_delta = 0.0
+EarlyStoppingConfig.patience = %PATIENCE
+
+########################
+#### PREDICT CONFIG ####
+########################
+
+RecsysPredictor.config = @RecsysPredictConfig()
+
+RecsysPredictConfig.accelerator = "gpu"
+RecsysPredictConfig.checkpoint_dir = @checkpoint/join_paths()
+RecsysPredictConfig.batch_size = %BATCH_SIZE
+RecsysPredictConfig.devices = 1
+RecsysPredictConfig.num_workers = 4
+RecsysPredictConfig.output_path = %PREDICT_OUTPUT_PATH
+RecsysPredictConfig.top_k = %PREDICT_TOP_K
+
+##################################
+#### TRAIN/DEV DATASET CONFIG ####
+##################################
+
+RecsysTrainer.train_dataset = @train_dataset/ParquetDataset2()
+RecsysTrainer.dev_dataset = @dev_dataset/ParquetDataset2()
+
+train_dataset/ParquetDataset2.parquet_dir = @train_dataset_path/join_paths()
+train_dataset/ParquetDataset2.shuffle = True
+train_dataset/ParquetDataset2.cache_transformed_data = %TRAN_CACHE_TRANSFORMED_DATA
+train_dataset/ParquetDataset2.seed = %SEED
+train_dataset/ParquetDataset2.dataset_type = %DatasetType.TRAIN_DATASET
+
+dev_dataset/ParquetDataset2.parquet_dir = @dev_dataset_path/join_paths()
+dev_dataset/ParquetDataset2.cache_transformed_data = %DEV_CACHE_TRANSFORMED_DATA
+dev_dataset/ParquetDataset2.seed = %SEED
+dev_dataset/ParquetDataset2.dataset_type = %DatasetType.DEV_DATASET
+
+#############################
+#### TEST DATASET CONFIG ####
+#############################
+
+RecsysPredictor.test_dataset = @test_dataset/ParquetDataset2()
+
+test_dataset/ParquetDataset2.parquet_dir = @test_dataset_path/join_paths()
+test_dataset/ParquetDataset2.shuffle = False
+test_dataset/ParquetDataset2.cache_transformed_data = %TEST_CACHE_TRANSFORMED_DATA
+test_dataset/ParquetDataset2.dataset_type = %DatasetType.PREDICT_DATASET

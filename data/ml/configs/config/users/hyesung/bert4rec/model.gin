@@ -1,0 +1,83 @@
+include 'data/ml/configs/config/common/base_user.gin'
+include 'data/ml/configs/config/common/model.gin'
+
+###################
+#### CONSTANTS ####
+###################
+
+MODEL_NAME = "bert4rec"
+MAX_SEQ_LEN = 40
+
+D_MODEL = 256
+NUM_LAYERS = 4
+NUM_HEADS = 4
+D_FF = 256
+DROPOUT = 0.3
+ATTN_DROPOUT = 0.3
+WEIGHT_DECAY = 0.0
+MASK_PROB = 0.2
+
+TRAN_CACHE_TRANSFORMED_DATA = False
+DEV_CACHE_TRANSFORMED_DATA = True
+TEST_CACHE_TRANSFORMED_DATA = True
+
+######################
+#### MODEL CONFIG ####
+######################
+
+RecsysTrainer.model = @Bert4Rec()
+RecsysPredictor.model = @Bert4Rec()
+
+Bert4Rec.generator = @ExclusionGenerator()
+Bert4Rec.bert_variant = %BertVariant.BERT
+Bert4Rec.meta = %METADATA
+Bert4Rec.d_model = %D_MODEL
+Bert4Rec.num_heads = %NUM_HEADS
+Bert4Rec.num_encoder_layers = %NUM_LAYERS
+Bert4Rec.d_ff = %D_FF
+Bert4Rec.dropout = %DROPOUT
+Bert4Rec.attn_dropout = %ATTN_DROPOUT
+Bert4Rec.max_seq_len = %MAX_SEQ_LEN
+Bert4Rec.weight_decay = %WEIGHT_DECAY
+
+ExclusionGenerator.meta = %METADATA
+ExclusionGenerator.top_k = 200
+ExclusionGenerator.exclusion_col = "exclusion"
+ExclusionGenerator.threshold = 0
+
+##############################
+#### TRAIN/PREDICT CONFIG ####
+##############################
+
+TrainConfig.checkpoints = [@best/CheckpointConfig()]
+TrainConfig.early_stopping = @EarlyStoppingConfig()
+EarlyStoppingConfig.monitor = "metrics_all_targets/ndcg@10"
+EarlyStoppingConfig.mode = "max"
+EarlyStoppingConfig.min_delta = 0.0
+EarlyStoppingConfig.patience = 10
+
+#######################################
+#### TRAIN/DEV/TEST DATASET CONFIG ####
+#######################################
+best/CheckpointConfig.monitor = "loss/dev"
+
+train_dataset/ParquetDataset2.transformer = @train_dev/MaskedSequentialDataTransformer()
+dev_dataset/ParquetDataset2.transformer = @train_dev/MaskedSequentialDataTransformer()
+test_dataset/ParquetDataset2.transformer = @test/MaskedSequentialDataTransformer()
+
+train_dev/MaskedSequentialDataTransformer.meta = %METADATA
+train_dev/MaskedSequentialDataTransformer.cols = ["inputs", "targets"]
+train_dev/MaskedSequentialDataTransformer.input_col = "inputs"
+train_dev/MaskedSequentialDataTransformer.target_col = "targets"
+train_dev/MaskedSequentialDataTransformer.meta_key = "item_id"
+train_dev/MaskedSequentialDataTransformer.max_seq_len = %MAX_SEQ_LEN
+train_dev/MaskedSequentialDataTransformer.overlength_handing_method = "random"
+train_dev/MaskedSequentialDataTransformer.mask_prob = %MASK_PROB
+
+test/MaskedSequentialDataTransformer.meta = %METADATA
+test/MaskedSequentialDataTransformer.cols = ["user_id", "inputs"]
+test/MaskedSequentialDataTransformer.input_col = "inputs"
+test/MaskedSequentialDataTransformer.target_col = None
+test/MaskedSequentialDataTransformer.meta_key = "item_id"
+test/MaskedSequentialDataTransformer.max_seq_len = %MAX_SEQ_LEN
+test/MaskedSequentialDataTransformer.overlength_handing_method = "latest"

@@ -1,0 +1,41 @@
+######################################
+# COMMON BASE                        #
+# These values are injected by User. #
+######################################
+
+TRAIN = True
+PREDICT = True
+
+# Below values are automatically injected by Bazel run_experiment function.
+USER = None
+DATA_TAG = "default"
+MODEL_TAG = "default"
+
+BASE_DATA_PATH = "s3://ridi-ml-batch"
+WAREHOUSE = "warehouse"
+DATABASE = None
+TABLE_NAME = None
+PARTITION = None
+PREDICTION_PARQUET_FILENAME = "predictions.snappy.parquet"
+
+USER_HOME = @user_home/join_paths()
+
+user_home/join_paths.base_path = %BASE_DATA_PATH
+user_home/join_paths.sub_paths = ["home", %USER]
+
+DATA_PROCESSOR_INPUT_PATH = @data_processor_input/join_paths()
+DATA_PROCESSOR_OUTPUT_PATH = @data_processor_output/join_paths()
+
+data_processor_input/join_paths.base_path = %BASE_DATA_PATH
+data_processor_input/join_paths.sub_paths = [%WAREHOUSE, %DATABASE, %TABLE_NAME, %PARTITION]
+
+data_processor_output/join_paths.base_path = %USER_HOME
+data_processor_output/join_paths.sub_paths = [%TABLE_NAME, %PARTITION, %DATA_TAG]
+
+MODEL_BASE_PATH = @model/join_paths()
+PREDICT_OUTPUT_PATH = @predict/join_paths()
+
+model/join_paths.base_path = %DATA_PROCESSOR_OUTPUT_PATH
+model/join_paths.sub_paths = ["model", %MODEL_TAG]
+predict/join_paths.base_path = %MODEL_BASE_PATH
+predict/join_paths.sub_paths = ["predictions", %PREDICTION_PARQUET_FILENAME]

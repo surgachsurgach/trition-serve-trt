@@ -1,0 +1,23 @@
+{
+  "fantasy_serial": [
+    {
+      "data_tag": "umin5_imin10_paid_and_free",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid", "free"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid", "free"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ]
+}

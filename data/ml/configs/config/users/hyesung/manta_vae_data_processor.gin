@@ -1,0 +1,18 @@
+include 'data/ml/configs/config/users/hyesung/common.gin'
+
+MIN_ITEM_INTERACTION = 3
+MIN_USER_INTERACTION = 10000
+
+AutoEncoderDataProcessor.input_files = %DATA_PROCESSOR_INPUT_PATH
+AutoEncoderDataProcessor.output_path = %DATA_PROCESSOR_OUTPUT_PATH
+AutoEncoderDataProcessor.meta_filename = %META_FILENAME
+AutoEncoderDataProcessor.input_user_id_col = "u_idx"
+AutoEncoderDataProcessor.input_target_interaction_col = "interaction_type"
+AutoEncoderDataProcessor.target_interaction = "positive_interaction"
+AutoEncoderDataProcessor.min_item_interaction =  %MIN_ITEM_INTERACTION
+AutoEncoderDataProcessor.min_user_interaction =  %MIN_USER_INTERACTION
+AutoEncoderDataProcessor.run_locally = False
+
+_run.data_processor = @AutoEncoderDataProcessor()
+_run.do_train = True
+_run.do_predict = True

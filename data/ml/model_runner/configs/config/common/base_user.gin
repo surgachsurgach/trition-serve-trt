@@ -1,0 +1,36 @@
+######################################
+# COMMON BASE                        #
+# These values are injected by User. #
+######################################
+
+# Use when you use etl's data processor output
+TRAIN = True
+PREDICT = True
+
+USER = None
+TABLE_NAME = None
+PARTITION = None
+
+DATA_TAG = "default"
+MODEL_TAG = "default"
+
+BASE_DATA_PATH = "s3://sagemaker-us-east-1-368316345532/recsys/dataset"
+PREDICTION_PARQUET_FILENAME = "predictions.snappy.parquet"
+
+USER_HOME = @user_home/join_paths()
+
+user_home/join_paths.base_path = %BASE_DATA_PATH
+user_home/join_paths.sub_paths = ["user", %USER]
+
+DATA_PROCESSOR_OUTPUT_PATH = @data_processor_output/join_paths()
+
+data_processor_output/join_paths.base_path = %USER_HOME
+data_processor_output/join_paths.sub_paths = [%MODEL_NAME, %TABLE_NAME, %PARTITION, %DATA_TAG]
+
+MODEL_BASE_PATH = @model/join_paths()
+PREDICT_OUTPUT_PATH = @predict/join_paths()
+
+model/join_paths.base_path = %DATA_PROCESSOR_OUTPUT_PATH
+model/join_paths.sub_paths = ["model", %MODEL_TAG]
+predict/join_paths.base_path = %MODEL_BASE_PATH
+predict/join_paths.sub_paths = ["predictions", %PREDICTION_PARQUET_FILENAME]

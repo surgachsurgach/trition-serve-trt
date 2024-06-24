@@ -1,0 +1,73 @@
+include 'data/ml/configs/config/common/base_user.gin'
+include 'data/ml/configs/config/common/model.gin'
+
+###################
+#### CONSTANTS ####
+###################
+
+MODEL_NAME = "item2vec"
+EMBEDDING_DIM = None
+DISCARD_FREQUENCY_THRESHOLD = 0.7
+FREQUENCY_EXPONENT = 0.75
+MAX_DISCARD_PROBABILITY = 0.5
+MAX_LENGTH = 50
+NUM_NEGATIVE_SAMPLES = None
+NEGATIVE_LOSS_WEIGHT = None
+
+TRAN_CACHE_TRANSFORMED_DATA = True
+DEV_CACHE_TRANSFORMED_DATA = True
+TEST_CACHE_TRANSFORMED_DATA = True
+
+######################
+#### MODEL CONFIG ####
+######################
+
+RecsysTrainer.model = @Item2Vec()
+RecsysPredictor.model = @Item2Vec()
+
+RecsysTrainer.train_collator = @Item2VecCollator()
+RecsysTrainer.dev_collator = @Item2VecCollator()
+
+Item2VecCollator.meta = %METADATA
+
+Item2Vec.meta = %METADATA
+Item2Vec.embedding_dim = %EMBEDDING_DIM
+Item2Vec.generator_class = @SimilarityGenerator
+Item2Vec.weight_decay = %WEIGHT_DECAY
+Item2Vec.negative_loss_weight = %NEGATIVE_LOSS_WEIGHT
+
+##############################
+#### TRAIN/PREDICT CONFIG ####
+##############################
+
+# TrainConfig.early_stopping = @EarlyStoppingConfig()
+
+#######################################
+#### TRAIN/DEV/TEST DATASET CONFIG ####
+#######################################
+RecsysTrainer.dev_dataset = None
+best/CheckpointConfig.monitor = "loss/train"
+
+train_dataset/ParquetDataset2.transformer = @SamplingDataTransformer()
+dev_dataset/ParquetDataset2.transformer = @SamplingDataTransformer()
+test_dataset/ParquetDataset2.transformer = @IdentityDataTransformer()
+
+SamplingDataTransformer.meta = %METADATA
+SamplingDataTransformer.cols = ["inputs"]
+SamplingDataTransformer.sampler = @SkipGramNegativeSampler()
+
+IdentityDataTransformer.meta = %METADATA
+IdentityDataTransformer.cols = ["item_idx"]
+
+########################
+#### SAMPLER CONFIG ####
+########################
+
+SkipGramNegativeSampler.meta = %METADATA
+
+SkipGramNegativeSampler.num_negative_samples = %NUM_NEGATIVE_SAMPLES
+SkipGramNegativeSampler.frequency_exponent = %FREQUENCY_EXPONENT
+
+SkipGramNegativeSampler.discard_frequency_threshold = %DISCARD_FREQUENCY_THRESHOLD
+SkipGramNegativeSampler.max_discard_probability = %MAX_DISCARD_PROBABILITY
+SkipGramNegativeSampler.max_length = %MAX_LENGTH

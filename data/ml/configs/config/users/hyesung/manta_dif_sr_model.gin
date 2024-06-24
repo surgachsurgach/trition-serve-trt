@@ -1,0 +1,100 @@
+include 'data/ml/configs/config/users/hyesung/common.gin'
+
+_run.do_train = True
+_run.do_predict = True
+_run.trainer = @RecsysTrainer()
+_run.predictor = @RecsysPredictor()
+
+###
+### PREPARE META
+###
+Meta.filepath = %DATA_PROCESSOR_META_OUTPUT_PATH
+metadata/gin.singleton.constructor = @Meta
+METADATA = @metadata/gin.singleton()
+
+####
+#### MODEL CONFIG ###
+####
+MAX_SEQ_LEN = 32
+
+DIF.meta = %METADATA
+DIF.d_model = 256
+DIF.num_heads = 8
+DIF.num_encoder_layers = 4
+DIF.d_ff = 256
+DIF.dropout = 0.5
+DIF.attn_dropout = 0.3
+DIF.side_features = []
+DIF.d_side_features = []
+DIF.lambdas = []
+DIF.max_seq_len = %MAX_SEQ_LEN
+
+####
+#### TRAIN CONFIG ###
+####
+
+COLUMNS = ["item_id"]
+RESERVED_LABELS = {
+    "item_id": 0,
+}
+
+train_dataset/ParquetIterableSequentialDataSet.parquet_dir = %MODEL_TRAIN_INPUT_PATH
+train_dataset/ParquetIterableSequentialDataSet.cols = %COLUMNS
+train_dataset/ParquetIterableSequentialDataSet.reserved_labels = %RESERVED_LABELS
+train_dataset/ParquetIterableSequentialDataSet.shuffle = True
+train_dataset/ParquetIterableSequentialDataSet.shuffle_buffer_size = 2048
+train_dataset/ParquetIterableSequentialDataSet.max_seq_len = %MAX_SEQ_LEN
+train_dataset/ParquetIterableSequentialDataSet.seed = 1234
+
+dev_dataset/ParquetIterableSequentialDataSet.parquet_dir =%MODEL_DEV_INPUT_PATH
+dev_dataset/ParquetIterableSequentialDataSet.cols = %COLUMNS
+dev_dataset/ParquetIterableSequentialDataSet.reserved_labels = %RESERVED_LABELS
+dev_dataset/ParquetIterableSequentialDataSet.shuffle = False
+dev_dataset/ParquetIterableSequentialDataSet.max_seq_len = %MAX_SEQ_LEN
+dev_dataset/ParquetIterableSequentialDataSet.meta = %METADATA
+
+best/CheckpointConfig.monitor = "loss/dev"
+best/CheckpointConfig.mode = "min"
+best/CheckpointConfig.filename = "best_model"
+best/CheckpointConfig.dirpath =%MODEL_CHECKPOINT_OUTPUT_PATH
+TrainConfig.checkpoints = [@best/CheckpointConfig()]
+TrainConfig.early_stopping = @EarlyStoppingConfig()
+EarlyStoppingConfig.monitor = "loss/dev"
+EarlyStoppingConfig.min_delta = 0.0
+EarlyStoppingConfig.patience = 5
+TrainConfig.accelerator = "gpu"
+TrainConfig.batch_size = 256
+TrainConfig.devices = 1
+TrainConfig.max_epoch = 50
+TrainConfig.num_workers = 4
+TrainConfig.log_dir = %MODEL_LOG_OUTPUT_PATH
+
+RecsysTrainer.config = @TrainConfig()
+RecsysTrainer.dev_dataset = @dev_dataset/ParquetIterableSequentialDataSet()
+RecsysTrainer.train_dataset = @train_dataset/ParquetIterableSequentialDataSet()
+RecsysTrainer.model = @DIF()
+
+####
+#### PREDICT OPTIONS
+####
+
+test_dataset/ParquetIterableSequentialDataSet.parquet_dir = %MODEL_TEST_INPUT_PATH
+test_dataset/ParquetIterableSequentialDataSet.meta = %METADATA
+test_dataset/ParquetIterableSequentialDataSet.reserved_labels = %RESERVED_LABELS
+test_dataset/ParquetIterableSequentialDataSet.cols = ["user_id", "item_id"]
+test_dataset/ParquetIterableSequentialDataSet.ignore = ["user_id"]
+test_dataset/ParquetIterableSequentialDataSet.shuffle = False
+test_dataset/ParquetIterableSequentialDataSet.max_seq_len = %MAX_SEQ_LEN
+
+RecsysPredictConfig.checkpoint_dir = %MODEL_CHECKPOINT_OUTPUT_PATH
+RecsysPredictConfig.output_path = %MODEL_PREDICTION_OUTPUT_PATH
+RecsysPredictConfig.accelerator = "gpu"
+RecsysPredictConfig.batch_size = 128
+RecsysPredictConfig.devices = 1
+RecsysPredictConfig.num_workers = 8
+RecsysPredictConfig.top_k = 100
+
+RecsysPredictor.test_dataset = @test_dataset/ParquetIterableSequentialDataSet()
+RecsysPredictor.config = @RecsysPredictConfig()
+RecsysPredictor.metadata = %METADATA
+RecsysPredictor.model = @DIF()

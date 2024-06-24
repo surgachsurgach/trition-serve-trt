@@ -1,0 +1,42 @@
+##############################
+# COMMON                     #
+# These values are injected. #
+##############################
+
+MODEL_NAME = None
+
+INPUT_USER_ID_COL = "user_id"
+INPUT_ITEM_ID_COL = "item_id"
+INPUT_WEIGHT_COL = "weight"
+INPUT_TARGET_INTERACTION_COL = "event"
+
+TRAIN_USER_MIN_INTERACTION = 10
+TRAIN_ITEM_MIN_INTERACTION = 20
+TRAIN_INTERACTIONS = ["paid"]
+
+TEST_USER_MIN_INTERACTION = 10
+TEST_ITEM_MIN_INTERACTION = 20
+TEST_INTERACTIONS = ["paid"]
+
+################
+#### CONFIG ####
+################
+
+InteractionDataSchemaConfig.input_user_id_col = %INPUT_USER_ID_COL
+InteractionDataSchemaConfig.input_item_id_col = %INPUT_ITEM_ID_COL
+InteractionDataSchemaConfig.input_weight_col = %INPUT_WEIGHT_COL
+InteractionDataSchemaConfig.input_target_interaction_col = %INPUT_TARGET_INTERACTION_COL
+
+train/InteractionDataProcessConfig.user_interaction_range = @train_user/InteractionRange()
+train/InteractionDataProcessConfig.item_interaction_range = @train_item/InteractionRange()
+train/InteractionDataProcessConfig.target_interactions = %TRAIN_INTERACTIONS
+
+test/InteractionDataProcessConfig.user_interaction_range = @test_user/InteractionRange()
+test/InteractionDataProcessConfig.item_interaction_range = @test_item/InteractionRange()
+test/InteractionDataProcessConfig.target_interactions = %TEST_INTERACTIONS
+
+train_user/InteractionRange.min = %TRAIN_USER_MIN_INTERACTION
+train_item/InteractionRange.min = %TRAIN_ITEM_MIN_INTERACTION
+
+test_user/InteractionRange.min = %TEST_USER_MIN_INTERACTION
+test_item/InteractionRange.min = %TEST_ITEM_MIN_INTERACTION

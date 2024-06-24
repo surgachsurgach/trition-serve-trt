@@ -1,0 +1,315 @@
+{
+  "bl_comic": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "bl_novel": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "bl_webnovel": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "bl_webtoon": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "comic": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "comic_serial": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 300,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    },
+    {
+      "data_tag": "paid_and_free",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid", "free"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid", "free"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 300,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "fantasy": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "fantasy_serial": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "general": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 5,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 5,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 100,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "romance": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "romance_serial": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "romance_fantasy": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "romance_fantasy_serial": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ],
+  "webtoon": [
+    {
+      "data_tag": "paid_only",
+      "data": {
+        "TRAIN_USER_MIN_INTERACTION": 5,
+        "TRAIN_ITEM_MIN_INTERACTION": 10,
+        "TRAIN_INTERACTIONS": ["paid"],
+        "TEST_USER_MIN_INTERACTION": 5,
+        "TEST_ITEM_MIN_INTERACTION": 10,
+        "TEST_INTERACTIONS": ["paid"],
+        "MAX_SEQ_LEN": 40,
+        "SLICE_STEP_SIZE": 40
+      },
+      "model_tag": "msl40",
+      "model": {
+        "MAX_EPOCHS": 200,
+        "MAX_SEQ_LEN": 40,
+        "PREDICT_TOP_K": 200
+      }
+    }
+  ]
+}

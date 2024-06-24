@@ -1,0 +1,13 @@
+include 'data/ml/configs/config/users/hyesung/common.gin'
+
+AutoEncoderDataProcessor.input_files = %DATA_PROCESSOR_INPUT_PATH
+AutoEncoderDataProcessor.output_path = %DATA_PROCESSOR_OUTPUT_PATH
+AutoEncoderDataProcessor.meta_filename = %META_FILENAME
+AutoEncoderDataProcessor.input_target_interaction_col = "act_type"
+AutoEncoderDataProcessor.min_item_interaction =  5
+AutoEncoderDataProcessor.min_user_interaction =  10
+AutoEncoderDataProcessor.run_locally = False
+
+_run.data_processor = @AutoEncoderDataProcessor()
+_run.do_train = True
+_run.do_predict = True

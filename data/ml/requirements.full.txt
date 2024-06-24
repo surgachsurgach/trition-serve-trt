@@ -1,0 +1,4 @@
+-r requirements.data.txt
+-r requirements.model.txt
+pyspark==3.3.0
+torch==2.2.0

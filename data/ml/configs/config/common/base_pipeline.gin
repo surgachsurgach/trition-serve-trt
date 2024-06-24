@@ -1,0 +1,29 @@
+######################################
+# COMMON BASE                        #
+# These values are injected by User. #
+######################################
+
+BASE_DATA_PATH = None
+INPUT_TABLE_NAME = None
+INPUT_PARTITION = None
+OUTPUT_TABLE_NAME = None
+OUTPUT_PARTITION = None
+MODEL_NAME = None
+
+TRAIN = None
+PREDICT = None
+
+PREDICTION_PARQUET_FILENAME = "predictions.snappy.parquet"
+
+DATA_PROCESSOR_INPUT_PATH = @data_processor_input/join_paths()
+DATA_PROCESSOR_OUTPUT_PATH = @data_processor_output/join_paths()
+
+join_paths.base_path = %BASE_DATA_PATH
+data_processor_input/join_paths.sub_paths = [%INPUT_TABLE_NAME, %INPUT_PARTITION]
+data_processor_output/join_paths.sub_paths = ["recsys", "dataset", %MODEL_NAME, %INPUT_PARTITION]
+
+MODEL_BASE_PATH = %DATA_PROCESSOR_OUTPUT_PATH
+PREDICT_OUTPUT_PATH = @predict/join_paths()
+
+predict/join_paths.base_path = %BASE_DATA_PATH
+predict/join_paths.sub_paths = [%OUTPUT_TABLE_NAME, %OUTPUT_PARTITION, %PREDICTION_PARQUET_FILENAME]

@@ -1,0 +1,9 @@
+{
+  "comic": {
+    "DATA_TAG": "bert4rec-realtime",
+    "MODEL_TAG": "bert4rec-realtime",
+    "MODEL_NAME": "bert4rec",
+    "TABLE_NAME": "feature_user_book_interaction_partitioned",
+    "PARTITION": "date=2024-06-16/interaction_type=purchase/version_tag=book2user_3year_20240408/genre=comic"
+  }
+}

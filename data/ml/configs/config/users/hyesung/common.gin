@@ -1,0 +1,57 @@
+BASE_DATA_PATH = "s3://ridi-ml-batch"
+WAREHOUSE = "warehouse"
+
+USER = None
+EXP_NAME = None
+DATABASE = None
+TABLE_NAME = None
+PARTITION = None
+META_FILENAME = "meta.json"
+PREDICTION_PARQUET_FILENAME = "predictions.snappy.parquet"
+
+# 0. define common root path
+user_home/join_paths.base_path = %BASE_DATA_PATH
+user_home/join_paths.sub_paths = ["home", %USER]
+USER_HOME = @user_home/join_paths()
+
+work_dir/join_paths.base_path = %USER_HOME
+work_dir/join_paths.sub_paths = [%EXP_NAME]
+WORKDIR = @work_dir/join_paths()
+
+# 1. configure setting for data processing step
+data_processor_input/join_paths.base_path = %BASE_DATA_PATH
+data_processor_input/join_paths.sub_paths = [%WAREHOUSE, %DATABASE, %TABLE_NAME, %PARTITION]
+data_processor_output/join_paths.base_path = %WORKDIR
+data_processor_output/join_paths.sub_paths = [%TABLE_NAME, %PARTITION]
+
+DATA_PROCESSOR_INPUT_PATH = @data_processor_input/join_paths()
+DATA_PROCESSOR_OUTPUT_PATH = @data_processor_output/join_paths()
+
+data_processor_meta_output/join_paths.base_path = %DATA_PROCESSOR_OUTPUT_PATH
+data_processor_meta_output/join_paths.sub_paths = [%META_FILENAME]
+DATA_PROCESSOR_META_OUTPUT_PATH = @data_processor_meta_output/join_paths()
+
+# 2. configure setting for model training step
+MODEL_INPUT_BASE_PATH = %DATA_PROCESSOR_OUTPUT_PATH
+MODEL_OUTPUT_BASE_PATH = %DATA_PROCESSOR_OUTPUT_PATH
+
+train_dataset_path/join_paths.base_path = %MODEL_INPUT_BASE_PATH
+train_dataset_path/join_paths.sub_paths = ["train"]
+dev_dataset_path/join_paths.base_path = %MODEL_INPUT_BASE_PATH
+dev_dataset_path/join_paths.sub_paths = ["dev"]
+test_dataset_path/join_paths.base_path = %MODEL_INPUT_BASE_PATH
+test_dataset_path/join_paths.sub_paths = ["test"]
+
+logdir/join_paths.base_path = %MODEL_OUTPUT_BASE_PATH
+logdir/join_paths.sub_paths = ["logdir"]
+checkpoint/join_paths.base_path = @logdir/join_paths()
+checkpoint/join_paths.sub_paths = ["checkpoints"]
+predict/join_paths.base_path = %MODEL_OUTPUT_BASE_PATH
+predict/join_paths.sub_paths = ["predictions", %PREDICTION_PARQUET_FILENAME]
+
+MODEL_TRAIN_INPUT_PATH = @train_dataset_path/join_paths()
+MODEL_DEV_INPUT_PATH = @dev_dataset_path/join_paths()
+MODEL_TEST_INPUT_PATH = @test_dataset_path/join_paths()
+MODEL_LOG_OUTPUT_PATH = @logdir/join_paths()
+MODEL_CHECKPOINT_OUTPUT_PATH = @checkpoint/join_paths()
+MODEL_PREDICTION_OUTPUT_PATH = @predict/join_paths()
