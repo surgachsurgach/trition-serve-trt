@@ -1,0 +1,12 @@
+package(
+    default_visibility = [
+        "//data:__subpackages__",
+    ],
+)
+
+py_library(
+    name = "hive",
+    srcs = glob(
+        ["*.py"],
+    ),
+)

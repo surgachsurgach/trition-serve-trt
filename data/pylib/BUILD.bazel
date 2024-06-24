@@ -1,0 +1,99 @@
+load("//data/build_tools/pytest:defs.bzl", "pytest_test")
+
+package(
+    default_visibility = [
+        "//data:__subpackages__",
+    ],
+)
+
+py_library(
+    name = "aws_utils",
+    srcs = ["aws_utils.py"],
+    deps = [
+        ":command_utils",
+        ":strenum",
+    ],
+)
+
+pytest_test(
+    name = "aws_utils_test",
+    srcs = ["aws_utils_test.py"],
+    deps = [
+        ":aws_utils",
+    ],
+)
+
+py_library(
+    name = "command_utils",
+    srcs = ["command_utils.py"],
+)
+
+pytest_test(
+    name = "command_utils_test",
+    srcs = ["command_utils_test.py"],
+    deps = [
+        ":command_utils",
+    ],
+)
+
+py_library(
+    name = "runfiles",
+    srcs = ["runfiles.py"],
+    deps = [
+        "@bazel_tools//tools/python/runfiles",
+    ],
+)
+
+pytest_test(
+    name = "runfiles_test",
+    srcs = ["runfiles_test.py"],
+    data = [":testdata/test.txt"],
+    deps = [
+        ":runfiles",
+    ],
+)
+
+py_library(
+    name = "strenum",
+    srcs = ["strenum.py"],
+)
+
+pytest_test(
+    name = "strenum_test",
+    srcs = ["strenum_test.py"],
+    deps = [
+        ":strenum",
+    ],
+)
+
+py_library(
+    name = "slack",
+    srcs = ["slack.py"],
+)
+
+py_library(
+    name = "watcher",
+    srcs = ["watcher.py"],
+    deps = [
+        ":slack",
+    ],
+)
+
+pytest_test(
+    name = "watcher_test",
+    srcs = ["watcher_test.py"],
+    deps = [
+        ":watcher",
+    ],
+)
+
+py_library(
+    name = "ridi_table",
+    srcs = ["ridi_table.py"],
+)
+
+exports_files(
+    [
+        "requirements.txt",
+    ],
+)

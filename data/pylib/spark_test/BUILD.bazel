@@ -1,0 +1,24 @@
+package(
+    default_visibility = [
+        "//data:__subpackages__",
+    ],
+)
+
+py_library(
+    name = "spark_test",
+    srcs = glob(
+        ["*.py"],
+        exclude = ["*_test.py"],
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+    ],
+)
+
+py_test(
+    name = "spark_test_utils_test",
+    srcs = ["spark_test_utils_test.py"],
+    deps = [
+        ":spark_test",
+    ],
+)
