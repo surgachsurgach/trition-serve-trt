@@ -1,6 +1,3 @@
 .DS_Store
-<<<<<<< HEAD
 *__pycache__/*
-=======
-__pycache__/
->>>>>>> d16094b6edbf2b6809ca57848a5a8459f10a72db
+.idea/

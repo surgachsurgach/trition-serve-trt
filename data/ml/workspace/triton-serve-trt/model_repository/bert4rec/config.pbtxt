@@ -3,23 +3,31 @@ platform: "pytorch_libtorch"
 max_batch_size : 64
 input [
   {
-    name: "input__0"
-    data_type: TYPE_FP32
-    dims: [ -1 ]
-    reshape { shape: [ 1, -1 ] }
+    name: "inputs"
+    data_type: TYPE_INT64
+    dims: [ 40 ]
+    reshape { shape: [ 1, 40 ] }
+  },
+  {
+    name: "target_idx"
+    data_type: TYPE_INT64
+    dims: [ 1 ]
+    reshape { shape: [ 1, 1 ] }
   }
 ]
 output [
   {
     name: "output__0"
     data_type: TYPE_FP32
-    dims: [ 1, -1]
-    reshape { shape: [ -1 ] }
-  },
-  {
-    name: "output__1"
-    data_type: TYPE_FP32
-    dims: [ 1, -1]
-    reshape { shape: [ -1 ] }
+    dims: [ 1, 10 ]
+    reshape { shape: [ 10 ] }
   }
 ]
+instance_group [
+    {
+      count: 1
+      kind: KIND_CPU
+      host_policy: "policy_0"
+    }
+]
+version_policy: { specific: { versions: [ 1 ]}}
