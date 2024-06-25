@@ -181,7 +181,7 @@ class Bert4Rec(RecsysSageMakerModelBase):
 
         if target_idx is not None:
             gather_index = target_idx.view(-1, 1, 1).expand(-1, -1, output.logits.shape[-1])
-            output.logits = output.logits.gather(dim=1, index=gather_index).squeeze(1)[:, :10]
+            output.logits = output.logits.gather(dim=1, index=gather_index).squeeze(1)[:, :10]  # only for test
 
         if targets is None:
             output.loss = torch.tensor(0, dtype=torch.int8)  # dummy loss not used in predict_step.

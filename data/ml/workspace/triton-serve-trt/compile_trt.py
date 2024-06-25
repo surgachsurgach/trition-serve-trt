@@ -4,7 +4,7 @@ import torch
 import torch_tensorrt
 import numpy as np
 
-from data.ml.workspace import bert4rec_model
+from data.ml import bert4rec_model
 from data.ml.model_runner.generators import item2user
 from data.ml.model_runner.inference.utils import model as model_utils
 
@@ -33,12 +33,17 @@ inputs = [
 
 trt_model = torch_tensorrt.compile(
     model,
+    ir="dynamo",
     inputs=inputs,
     enabled_precisions={torch.float32},
     workspace_size=2000000000,
     truncate_long_and_double=True,
-    output_format="torchscript",
 )
 
+inputs = [
+    torch.rand(1,40).long().cuda(),
+    torch.rand(1,1).long().cuda()
+]
 # Save the model
-torch.jit.save(trt_model, f"{_TEST_MODEL_REPO}/bert4rec/1/model.pt")
+# torch_tensorrt.save(trt_model, f"{_TEST_MODEL_REPO}/bert4rec/1/model.ep", inputs=inputs)
+torch_tensorrt.save(trt_model, f"{_TEST_MODEL_REPO}/bert4rec/1/model.pt", output_format="torchscript", inputs=inputs)
