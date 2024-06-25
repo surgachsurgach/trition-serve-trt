@@ -4,7 +4,7 @@ At this point, we recommend pulling the [PyTorch container](https://catalog.ngc.
 from [NVIDIA GPU Cloud](https://catalog.ngc.nvidia.com/) as follows:
 
 ```
-docker pull nvcr.io/nvidia/pytorch:22.05-py3
+docker pull nvcr.io/nvidia/pytorch:24.05-py3
 ```
 
 Replace ```22.05``` with a different string in the form ```yy.mm```,
@@ -17,39 +17,17 @@ Therefore, you can run the container and the notebooks therein without
 mounting the repo to the container. To do so, run
 
 ```
-docker run --gpus=all --rm -it --net=host --ipc=host \
---ulimit memlock=-1 --ulimit stack=67108864 \
-nvcr.io/nvidia/pytorch:22.05-py3 bash
-```
-
-If, however, you wish for your work in the notebooks to persist, use the
-```-v``` flag to mount the repo to the container as follows:
-
-```
+cd $PROJECT_ROOT
 docker run --gpus=all --rm -it -v $PWD:/Torch-TensorRT \
 --net=host --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 \
-nvcr.io/nvidia/pytorch:22.05-py3 bash
+nvcr.io/nvidia/pytorch:24.05-py3 bash
 ```
 
-### b. Running the notebooks inside the container
-
-Within the docker interactive bash session, proceed to the notebooks.
-To use the notebooks which ship with the container, run
-
+### b. Run compiling model inside the container
 ```
-cd /workspace/examples/torch_tensorrt/notebooks
-```
-
-If, however, you mounted the repo to the container, run
-
-```
-cd /Torch-TensorRT/notebooks
-```
-
-Once you have entered the appropriate ```notebooks``` directory, start Jupyter with
-
-```
-jupyter notebook --allow-root --ip 0.0.0.0 --port 8888
+$ cd /Torch-TensorRT/
+$ pip install -r data/ml/workspace/triton-serve-trt/requirements.txt
+$ PYTHONPATH=. python data/ml/workspace/triton-serve-trt/comile_trt.py
 ```
 
 And navigate a web browser to the IP address or hostname of the host machine
@@ -60,5 +38,18 @@ in, for example:
 
 ```http://[host machine]:8888/?token=aae96ae9387cd28151868fee318c3b3581a2d794f3b25c6b```
 
-### c. triton backend
+### c. Run triton server
 We use the pytorch backend (pytorch_libtorch) for deploying the model. To install Triton, follow the instructions [here](https://github.com/triton-inference-server/pytorch_backend)
+```bash
+$ cd data/ml/workspace/triton-serve-trt/
+$ docker run --gpus=all --rm -p8000:8000 -p8001:8001 -p8002:8002 -v $PWD:/models nvcr.io/nvidia/tritonserver:24.05-py3 
+$ tritonserver --model-repository=/models
+```
+
+### d. Run triton client
+```bash
+$ docker run --gpus=all --rm -it -v $PWD:/Torch-TensorRT --net=host --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 nvcr.io/nvidia/pytorch:24.05-py3 bash
+$ pip install tritonclient[all]
+$ cd /Torch-TensorRT
+$ python data/ml/workspace/triton-serve-trt/triton_client.py
+```
