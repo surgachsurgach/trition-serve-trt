@@ -1,0 +1,75 @@
+name: "bert4rec_ensemble"
+platform: "ensemble"
+max_batch_size: 1
+input [
+  {
+    name: "inputs"
+    data_type: TYPE_INT64
+    dims: [ 40 ]
+  },
+    {
+    name: "target_idx"
+    data_type: TYPE_INT64
+    dims: [ 1 ]
+  },
+]
+output [
+  {
+    name: "output__0"
+    data_type: TYPE_FP32
+    dims: [ 10 ]
+  }
+]
+
+ensemble_scheduling {
+  step [
+    {
+      model_name: "bert4rec_preprocessing"
+      model_version: -1
+      input_map {
+        key: "bert4rec_preprocessing_input__0"
+        value: "inputs"
+      }
+      input_map {
+        key: "bert4rec_preprocessing_input__1"
+        value: "target_idx"
+      }
+      output_map {
+        key: "bert4rec_preprocessing_output__0"
+        value: "processed_inputs"
+      }
+      output_map {
+        key: "bert4rec_preprocessing_output__1"
+        value: "processed_target_idx"
+      }
+    },
+    {
+      model_name: "bert4rec"
+      model_version: -1
+      input_map {
+        key: "inputs"
+        value: "processed_inputs"
+      }
+      input_map {
+        key: "target_idx"
+        value: "processed_target_idx"
+      }
+      output_map {
+        key: "output__0"
+        value: "item_idxes"
+      }
+    },
+    {
+      model_name: "bert4rec_postprocessing"
+      model_version: -1
+      input_map {
+        key: "bert4rec_postprocessing_input__0"
+        value: "item_idxes"
+      }
+      output_map {
+        key: "bert4rec_postprocessing_output__0"
+        value: "item_ids"
+      }
+    }
+  ]
+}

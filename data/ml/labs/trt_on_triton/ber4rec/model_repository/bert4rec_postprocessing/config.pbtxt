@@ -1,0 +1,24 @@
+name: "bert4rec_preprocessing"
+backend: "python"
+max_batch_size: 1
+input [
+    {
+        name: "bert4rec_postprocessing_input__0"
+        data_type: TYPE_INT64
+        dims: [ 40 ]
+    },
+    {
+       name: "bert4rec_postprocessing_input__1"
+        data_type: TYPE_INT64
+        dims: [ 1 ]
+    }
+]
+output [
+    {
+        name: "bert4rec_postprocessing_output__0"
+        data_type: TYPE_FP32
+        dims: [ 10 ]
+    }
+]
+
+instance_group [{ kind: KIND_CPU }]
