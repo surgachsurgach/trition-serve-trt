@@ -23,7 +23,7 @@ output [
         name: "bert4rec_preprocessing_output__1"
         data_type: TYPE_INT64
         dims: [ 1 ]
-    },
+    }
 ]
 
 instance_group [{ kind: KIND_CPU }]
