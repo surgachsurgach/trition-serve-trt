@@ -26,7 +26,6 @@ output [
   },
   }
 ]
-
 ensemble_scheduling {
   step [
     {
@@ -86,7 +85,7 @@ ensemble_scheduling {
       }
       output_map {
         key: "bert4rec_postprocessing_output__1"
-        value: "item_scores"
+        value: "scores"
       }
     }
   ]
