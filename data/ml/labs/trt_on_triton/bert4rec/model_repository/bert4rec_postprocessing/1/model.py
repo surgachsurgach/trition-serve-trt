@@ -82,6 +82,7 @@ class TritonPythonModel:
     def execute(self, requests):
         responses = []
         for request in requests:
+            # TODO(hyesung): Find how to resolve pb_utils.Tensor is not iterable.
             input__0 = pb_utils.get_input_tensor_by_name(
                 request, "bert4rec_postprocessing_input__0"
             )

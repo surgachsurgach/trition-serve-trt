@@ -123,6 +123,7 @@ class TritonPythonModel:
         # Every Python backend must iterate over everyone of the requests
         # and create a pb_utils.InferenceResponse for each of them.
         for request in requests:
+            # TODO(hyesung): Find how to resolve pb_utils.Tensor is not iterable.
             input__0 = pb_utils.get_input_tensor_by_name(
                 request, "bert4rec_preprocessing_input__0"
             )
