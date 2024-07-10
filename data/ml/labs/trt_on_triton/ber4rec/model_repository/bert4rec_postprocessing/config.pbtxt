@@ -5,17 +5,22 @@ input [
     {
         name: "bert4rec_postprocessing_input__0"
         data_type: TYPE_INT64
-        dims: [ 40 ]
+        dims: [ 10 ]
     },
     {
        name: "bert4rec_postprocessing_input__1"
-        data_type: TYPE_INT64
-        dims: [ 1 ]
+        data_type: TYPE_FP32
+        dims: [ 10 ]
     }
 ]
 output [
     {
         name: "bert4rec_postprocessing_output__0"
+        data_type: TYPE_INT64
+        dims: [ 10 ]
+    },
+    {
+        name: "bert4rec_postprocessing_output__1"
         data_type: TYPE_FP32
         dims: [ 10 ]
     }

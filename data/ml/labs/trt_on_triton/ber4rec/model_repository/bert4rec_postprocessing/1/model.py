@@ -2,6 +2,7 @@ import json
 from typing import Callable, Dict, List, Optional, Union
 
 import fsspec
+import numpy as np
 
 from data.ml.utils import file_utils
 # triton_python_backend_utils is available in every Triton Python model. You
@@ -85,19 +86,19 @@ class TritonPythonModel:
             output__0 = pb_utils.get_input_tensor_by_name(
                 request, "output__0"
             )
-            output = {self.idx_to_id[idx]: score for idx, score in enumerate(output__0)}
-
-            output = {
-                "item_ids": list(output.keys()),
-                "scores": list(output.values()),
-            }
-
-            out_tensor_0 = pb_utils.Tensor(
-                "bert4rec_postprocessing_output__0", output
+            output__0 = pb_utils.Tensor(
+                "bert4rec_postprocessing_output__0",
+                np.array([self.idx_to_id[idx] for idx in output__0]).astype(self.output0_dtype),
             )
 
+            output__1 = pb_utils.get_output_config_by_name(
+                request,
+                "output__1",
+            )
+
+
             inference_response = pb_utils.InferenceResponse(
-                output_tensors=[out_tensor_0]
+                output_tensors=[output__0, output__1]
             )
             responses.append(inference_response)
 

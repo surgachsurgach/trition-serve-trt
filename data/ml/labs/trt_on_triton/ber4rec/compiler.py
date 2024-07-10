@@ -40,15 +40,15 @@ class CustomBert4rec(bert4rec.Bert4Rec):
             attention_mask=inputs != self._pad_token_id,
         )
 
-        if target_idx is not None:
-            gather_index = target_idx.view(-1, 1, 1).expand(-1, -1, output.logits.shape[-1])
-            # replace top_k logic with fixed slicing size 10.
-            output.logits = output.logits.gather(dim=1, index=gather_index).squeeze(1)[:, :-2][:, :10]
+        # always assume target_idx is not None which means inference mode.
+        gather_index = target_idx.view(-1, 1, 1).expand(-1, -1, output.logits.shape[-1])
 
-        if targets is None:
-            output.loss = torch.tensor(0, dtype=torch.int8)  # dummy loss not used in predict_step.
+        # replace top_k logic with fixed slicing size 10.
+        logits = output.logits.gather(dim=1, index=gather_index).squeeze(1)[:, :-2]
+        top_k = 10
+        topk_score, topk_idx = torch.topk(logits, top_k)
 
-        return output.logits, output.loss
+        return topk_idx, topk_score
 
 
 def main():

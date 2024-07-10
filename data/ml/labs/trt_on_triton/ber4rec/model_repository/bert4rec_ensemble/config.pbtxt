@@ -16,8 +16,14 @@ input [
 output [
   {
     name: "output__0"
+    data_type: TYPE_INT64
+    dims: [ 10 ]
+  },
+  {
+    name: "output__1"
     data_type: TYPE_FP32
     dims: [ 10 ]
+  },
   }
 ]
 
@@ -58,6 +64,10 @@ ensemble_scheduling {
         key: "output__0"
         value: "item_idxes"
       }
+      output_map {
+        key: "output__1"
+        value: "item_scores"
+      }
     },
     {
       model_name: "bert4rec_postprocessing"
@@ -66,9 +76,17 @@ ensemble_scheduling {
         key: "bert4rec_postprocessing_input__0"
         value: "item_idxes"
       }
+      input_matp {
+        key: "bert4rec_postprocessing_input__1"
+        value: "item_scores"
+      }
       output_map {
         key: "bert4rec_postprocessing_output__0"
         value: "item_ids"
+      }
+      output_map {
+        key: "bert4rec_postprocessing_output__1"
+        value: "item_scores"
       }
     }
   ]
