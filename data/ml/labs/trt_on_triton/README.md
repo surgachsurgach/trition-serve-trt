@@ -32,6 +32,7 @@ $ PYTHONPATH=. python data/ml/labs/trt_on_triton/${MODEL_NAME}/compiler.py
 $ cd data/ml/labs/trt_on_triton/${MODEL_NAME}
 $ docker run --gpus=all --rm -it -p8000:8000 -p8001:8001 -p8002:8002 -v $PWD:/workspace nvcr.io/nvidia/tritonserver:24.05-py3
 $ cd /workspace
+$ pip install fsspec==2023.5.0
 $ tritonserver --model-repository=./model_repository
 ```
 
