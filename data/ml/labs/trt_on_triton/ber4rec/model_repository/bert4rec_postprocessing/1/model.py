@@ -83,17 +83,18 @@ class TritonPythonModel:
     def execute(self, requests):
         responses = []
         for request in requests:
-            output__0 = pb_utils.get_input_tensor_by_name(
-                request, "output__0"
+            input__0 = pb_utils.get_input_tensor_by_name(
+                request, "bert4rec_postprocessing_input__0"
             )
             output__0 = pb_utils.Tensor(
                 "bert4rec_postprocessing_output__0",
-                np.array([self.idx_to_id[idx] for idx in output__0]).astype(self.output0_dtype),
+                np.array([self.idx_to_id[idx.item()] for idx in input__0]).astype(self.output0_dtype),
             )
 
+            # bypass
             output__1 = pb_utils.get_output_config_by_name(
                 request,
-                "output__1",
+                "bert4rec_postprocessing_input__1",
             )
 
 
