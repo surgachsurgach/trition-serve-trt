@@ -65,10 +65,28 @@ def main():
         torch_tensorrt.Input(shape=[1, 1], dtype=torch.int64),
     ]
 
+    dynamic_inputs = [
+        torch_tensorrt.Input(
+            name="inputs",
+            min_shape=[1, 40],
+            opt_shape=[32,40],
+            max_shape=[64,40],
+            dtype=torch.int64,
+        ),
+        torch_tensorrt.Input(
+            name="target_idx",
+            min_shape=[1, 1],
+            opt_shape=[32, 1],
+            max_shape=[64, 1],
+            dtype=torch.int64,
+        ),
+    ]
+
     trt_model = torch_tensorrt.compile(
         model,
         ir="dynamo",
         inputs=inputs,
+        assume_dynamic_shape_support=True,
         enabled_precisions={torch.half, torch.float32},
         workspace_size=2000000000,
         truncate_long_and_double=True,
