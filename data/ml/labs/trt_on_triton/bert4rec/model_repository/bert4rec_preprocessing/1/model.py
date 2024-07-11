@@ -130,7 +130,7 @@ class TritonPythonModel:
 
             out_tensor_0 = pb_utils.Tensor(
                 "bert4rec_preprocessing_output__0",
-                np.array([self.id_to_idx[id_.item()] for id_ in input__0]).astype(self.output0_dtype),
+                np.array([self.id_to_idx[id_] for id_ in input__0.as_numpy()]).astype(self.output0_dtype),
             )
             output_tensor_1 = pb_utils.get_input_tensor_by_name(
                 request, "bert4rec_preprocessing_input__1"

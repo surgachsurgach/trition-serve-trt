@@ -88,7 +88,7 @@ class TritonPythonModel:
             )
             output__0 = pb_utils.Tensor(
                 "bert4rec_postprocessing_output__0",
-                np.array([self.idx_to_id[idx.item()] for idx in input__0]).astype(self.output0_dtype),
+                np.array([self.idx_to_id[idx] for idx in input__0.as_numpy()]).astype(self.output0_dtype),
             )
 
             # bypass
