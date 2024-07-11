@@ -123,18 +123,22 @@ class TritonPythonModel:
         # Every Python backend must iterate over everyone of the requests
         # and create a pb_utils.InferenceResponse for each of them.
         for request in requests:
-            # TODO(hyesung): Find how to resolve pb_utils.Tensor is not iterable.
-            input__0 = pb_utils.get_input_tensor_by_name(
+            # squeeze batch dimension.
+            input_0 = pb_utils.get_input_tensor_by_name(
                 request, "bert4rec_preprocessing_input__0"
+            ).as_numpy().squeeze()
+
+            output_0 = np.array([self.id_to_idx[id_] for id_ in input_0]).astype(self.output0_dtype)
+            output_0 = np.expand_dims(output_0, axis=0)  # recover batch dimension.
+            output_0 = pb_utils.Tensor(
+                "bert4rec_preprocessing_output__0",
+                output_0,
             )
 
-            out_tensor_0 = pb_utils.Tensor(
-                "bert4rec_preprocessing_output__0",
-                np.array([self.id_to_idx[id_] for id_ in input__0.as_numpy()]).astype(self.output0_dtype),
-            )
-            output_tensor_1 = pb_utils.get_input_tensor_by_name(
+            input_1 = pb_utils.get_input_tensor_by_name(
                 request, "bert4rec_preprocessing_input__1"
             )
+            output_1 = input_1  # use as is.
 
             # Create InferenceResponse. You can set an error here in case
             # there was a problem with handling this inference request.
@@ -144,7 +148,7 @@ class TritonPythonModel:
             # pb_utils.InferenceResponse(
             #    output_tensors=..., TritonError("An error occurred"))
             inference_response = pb_utils.InferenceResponse(
-                output_tensors=[out_tensor_0, output_tensor_1]
+                output_tensors=[output_0, output_1]
             )
             responses.append(inference_response)
         # You should return a list of pb_utils.InferenceResponse. Length
