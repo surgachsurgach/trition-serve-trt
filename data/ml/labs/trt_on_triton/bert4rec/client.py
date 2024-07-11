@@ -5,6 +5,7 @@ import tritonclient.http as httpclient
 
 
 def main():
+    model_name = "bert4rec_ensemble"
     client = httpclient.InferenceServerClient(url="localhost:8000", verbose=True)
 
     input_inputs = httpclient.InferInput("inputs", [1, 40], "INT64")
@@ -73,7 +74,7 @@ def main():
         httpclient.InferRequestedOutput("output__0"),
         httpclient.InferRequestedOutput("output__1")
     ]
-    response = client.infer("bert4rec", inputs, outputs=outputs)
+    response = client.infer(model_name, inputs, outputs=outputs)
     print(response.as_numpy("output__0"))
     print(response.as_numpy("output__1"))
 
