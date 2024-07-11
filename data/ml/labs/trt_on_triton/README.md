@@ -63,6 +63,9 @@ $ perf_analyzer -m bert4rec -u 127.0.0.1:8001 -i grpc --input-data ./test_data/d
 - https://github.com/pytorch/TensorRT/blob/v2.3.0-rc1/py/torch_tensorrt/_compile.py
 - https://github.com/triton-inference-server/server/blob/main/docs/user_guide/model_configuration.md#instance-groups
 - https://github.com/triton-inference-server/tutorials/blob/main/Conceptual_Guide/Part_1-model_deployment/client.py
+- https://github.com/triton-inference-server/python_backend/blob/main/src/resources/triton_python_backend_utils.py
+- https://github.com/triton-inference-server/python_backend/blob/main/examples/preprocessing/model_repository/resnet50_trt/config.pbtxt
+- https://github.com/triton-inference-server/tutorials/blob/main/Conceptual_Guide/Part_5-Model_Ensembles/model_repository/detection_preprocessing/1/model.py
 - https://github.com/triton-inference-server/client/blob/main/src/python/examples/simple_http_infer_client.py
 - https://github.com/triton-inference-server/client/blob/main/src/c%2B%2B/perf_analyzer/docs/quick_start.md
 
