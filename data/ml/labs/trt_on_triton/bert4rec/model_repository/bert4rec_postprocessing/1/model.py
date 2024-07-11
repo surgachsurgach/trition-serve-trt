@@ -92,7 +92,7 @@ class TritonPythonModel:
             )
 
             # bypass
-            output__1 = pb_utils.get_output_config_by_name(
+            output__1 = pb_utils.get_input_tensor_by_name(
                 request,
                 "bert4rec_postprocessing_input__1",
             )
