@@ -71,9 +71,11 @@ def main():
     ]
     outputs = [
         httpclient.InferRequestedOutput("output__0"),
+        httpclient.InferRequestedOutput("output__1")
     ]
     response = client.infer("bert4rec", inputs, outputs=outputs)
     print(response.as_numpy("output__0"))
+    print(response.as_numpy("output__1"))
 
 
 if __name__ == "__main__":
