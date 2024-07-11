@@ -1,6 +1,5 @@
 name: "bert4rec_postprocessing"
 backend: "python"
-max_batch_size: 1
 input [
     {
         name: "bert4rec_postprocessing_input__0"

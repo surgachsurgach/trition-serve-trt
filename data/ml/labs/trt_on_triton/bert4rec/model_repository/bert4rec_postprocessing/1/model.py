@@ -81,14 +81,12 @@ class TritonPythonModel:
     def execute(self, requests):
         responses = []
         for request in requests:
-            # TODO(hyesung): Find how to resolve pb_utils.Tensor is not iterable.
             item_idxes = pb_utils.get_input_tensor_by_name(
                 request, "bert4rec_postprocessing_input__0"
-            ).as_numpy().squeeze()
+            ).as_numpy()
 
             item_ids = np.array([self.idx_to_id[idx] for idx in item_idxes]).astype(self.output0_dtype)
-            item_ids = np.expand_dims(item_ids, axis=0)  # recover batch dimension.
-            item_ids = pb_utils.Tensor(
+            item_ids_tensor = pb_utils.Tensor(
                 "bert4rec_postprocessing_output__0",
                 item_ids,
             )
@@ -97,9 +95,13 @@ class TritonPythonModel:
                 request,
                 "bert4rec_postprocessing_input__1",
             )
+            item_scores_tensor = pb_utils.Tensor(
+                "bert4rec_postprocessing_output__1",
+                item_scores.as_numpy(),
+            )
 
             inference_response = pb_utils.InferenceResponse(
-                output_tensors=[item_ids, item_scores]
+                output_tensors=[item_ids_tensor, item_scores_tensor]
             )
             responses.append(inference_response)
 

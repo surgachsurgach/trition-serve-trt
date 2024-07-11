@@ -1,16 +1,10 @@
 name: "bert4rec_ensemble"
 platform: "ensemble"
-max_batch_size: 1
 input [
   {
     name: "inputs"
     data_type: TYPE_INT64
-    dims: [ 40 ]
-  },
-   {
-    name: "target_idx"
-    data_type: TYPE_INT64
-    dims: [ 1 ]
+    dims: [ 39 ]
   }
 ]
 output [
@@ -33,10 +27,6 @@ ensemble_scheduling {
       input_map {
         key: "bert4rec_preprocessing_input__0"
         value: "inputs"
-      }
-      input_map {
-        key: "bert4rec_preprocessing_input__1"
-        value: "target_idx"
       }
       output_map {
         key: "bert4rec_preprocessing_output__0"
