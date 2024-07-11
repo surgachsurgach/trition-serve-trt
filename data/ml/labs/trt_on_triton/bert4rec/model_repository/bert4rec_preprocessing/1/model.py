@@ -124,21 +124,20 @@ class TritonPythonModel:
         # and create a pb_utils.InferenceResponse for each of them.
         for request in requests:
             # squeeze batch dimension.
-            input_0 = pb_utils.get_input_tensor_by_name(
+            item_ids = pb_utils.get_input_tensor_by_name(
                 request, "bert4rec_preprocessing_input__0"
             ).as_numpy().squeeze()
 
-            output_0 = np.array([self.id_to_idx[id_] for id_ in input_0]).astype(self.output0_dtype)
-            output_0 = np.expand_dims(output_0, axis=0)  # recover batch dimension.
-            output_0 = pb_utils.Tensor(
+            item_idxes = np.array([self.id_to_idx[id_] for id_ in item_ids]).astype(self.output0_dtype)
+            item_idxes = np.expand_dims(item_idxes, axis=0)  # recover batch dimension.
+            item_idxes = pb_utils.Tensor(
                 "bert4rec_preprocessing_output__0",
-                output_0,
+                item_idxes,
             )
 
-            input_1 = pb_utils.get_input_tensor_by_name(
+            target_idx = pb_utils.get_input_tensor_by_name(
                 request, "bert4rec_preprocessing_input__1"
             )
-            output_1 = input_1  # use as is.
 
             # Create InferenceResponse. You can set an error here in case
             # there was a problem with handling this inference request.
@@ -148,7 +147,7 @@ class TritonPythonModel:
             # pb_utils.InferenceResponse(
             #    output_tensors=..., TritonError("An error occurred"))
             inference_response = pb_utils.InferenceResponse(
-                output_tensors=[output_0, output_1]
+                output_tensors=[item_idxes, target_idx]
             )
             responses.append(inference_response)
         # You should return a list of pb_utils.InferenceResponse. Length
